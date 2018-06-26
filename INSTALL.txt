@@ -1,0 +1,9 @@
+# To compile the decoder, works with ROOT 6.08.06
+	$ g++ -o decodeFE `root-config --cflags --glibs` -I src/ decodeFE.cc
+
+
+# To compile other tool kits 
+	$ scons
+
+
+
