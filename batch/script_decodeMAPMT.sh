@@ -51,6 +51,14 @@ if (-e run_${FILENO}.bin.root) then
 	chmod 664 ${OUTDIR}/${LOAD}/${FPGA}/run_${FILENO}.bin.root
 endif
 
+# save output histograms
+mkdir -p -m 775 ${OUTDIR}/${LOAD}/${FPGA}/
+if (-e adc_plots.hist.root) then
+        cp -v adc_plots.hist.root ${OUTDIR}/${LOAD}/${FPGA}/adc_plots_${FILENO}.hist.root
+        chmod 664 ${OUTDIR}/${LOAD}/${FPGA}/adc_plots_${FILENO}.hist.root
+endif
+
+# save output images
 mkdir -p -m 775 ${OUTDIR}/plots
 if (-e adc_plots.pdf) then
         cp -v adc_plots.pdf ${OUTDIR}/plots/adc_plots_${LOAD}_${FPGA}_${FILENO}.pdf

@@ -6,6 +6,7 @@
 #include<TString.h>
 #include<TRegexp.h>
 #include<TStyle.h>
+#include<TFile.h>
 #include"feio.h"
 
 using namespace std;
@@ -72,6 +73,11 @@ goodRICHEvent::~goodRICHEvent(){
 	}
 	//gStyle->SetOptStat(0);
 	c1->Print("adc_plots.pdf]");
+
+	TFile *fout = new TFile("adc_plots.hist.root", "recreate");
+	for(int ich=0;ich<NCHANNELS;ich++)
+                h1[ich]->Write();
+	fout->Close();
 
 	for(int ich=0;ich<NCHANNELS;ich++)
 		delete h1[ich];
