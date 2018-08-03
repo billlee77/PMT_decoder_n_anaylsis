@@ -1,7 +1,7 @@
 #include<iostream>
 #include<TFile.h>
 #include<TTree.h>
-#include<TH1I.h>
+#include<TH1D.h>
 #include<TGraphErrors.h>
 #include<TCanvas.h>
 #include<TStyle.h>
@@ -17,7 +17,7 @@ class goodRICHEvent:public RICHEvent{
 	double getCenterCounts();
 
   private:
-	TH1I* h1[NCHANNELS];
+	TH1D* h1[NCHANNELS];
 	uint8_t ipix[64];
 };
 
@@ -25,7 +25,7 @@ goodRICHEvent::goodRICHEvent(){
 	std::copy(chan2pix, chan2pix+64, ipix);
 
      for(int ich=0;ich<NCHANNELS;ich++)
-		h1[ich]  = new TH1I(Form("h1_%03d",ich), Form("Channel %d, pixel %d; ADC",ich,ipix[ich%64]), 4100, -0.5, 4099.5 );
+		h1[ich]  = new TH1D(Form("h1_%03d",ich), Form("Channel %d, pixel %d; ADC",ich,ipix[ich%64]), 4100, -0.5, 4099.5 );
 }
 
 void goodRICHEvent::Fill(rawEvent &rev)

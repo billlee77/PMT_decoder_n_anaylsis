@@ -1,7 +1,7 @@
 #include<iostream>
 #include<TFile.h>
 #include<TTree.h>
-#include<TH2I.h>
+#include<TH2D.h>
 #include<TGraph.h>
 #include<TCanvas.h>
 #include<TStyle.h>
@@ -18,8 +18,8 @@ class goodRICHEvent:public RICHEvent{
 	void Print();
 
   private:
-	TH1I* h1[NCHANNELS];
-	TH2I* htot;
+	TH1D* h1[NCHANNELS];
+	TH2D* htot;
 	TCanvas* c1;
 	int nasic;
 };
@@ -28,9 +28,9 @@ goodRICHEvent::goodRICHEvent(int _nasic):nasic(_nasic){
 	c1 = new TCanvas("c1", "c1", nasic*400, 400);
 	c1->Print("laser_exposure.pdf[");
      for(int ich=0;ich<NCHANNELS;ich++)
-		h1[ich]  = new TH1I(Form("h1_%03d",ich), Form("Channel %d; ADC",ich), 4100, -0.5, 4099.5 );
+		h1[ich]  = new TH1D(Form("h1_%03d",ich), Form("Channel %d; ADC",ich), 4100, -0.5, 4099.5 );
 
-	htot = new TH2I("htot", "laser exposure", nasic*8, 0.5,8*nasic+.5, 8, 0.5, 8.5);
+	htot = new TH2D("htot", "laser exposure", nasic*8, 0.5,8*nasic+.5, 8, 0.5, 8.5);
 }
 
 void goodRICHEvent::Fill(rawEvent &rev)
@@ -42,7 +42,7 @@ void goodRICHEvent::Fill(rawEvent &rev)
 
 void goodRICHEvent::Print()
 {
-	TH2I* hperfile = new TH2I("hperfile", "laser exposure", nasic*8, 0.5,8*nasic+.5, 8, 0.5, 8.5);
+	TH2D* hperfile = new TH2D("hperfile", "laser exposure", nasic*8, 0.5,8*nasic+.5, 8, 0.5, 8.5);
 
 	Float_t value_min = 1000000000;
 
