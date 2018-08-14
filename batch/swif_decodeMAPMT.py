@@ -35,7 +35,8 @@ OS         = "centos7"         # Specify CentOS7 machines
 
 # SOURCE DATA INFORMATION
 DATA_SOURCE_TYPE      = "file" #"mss" for tape files, "file" for disk files
-DATA_SOURCE_BASE_DIR  = "/cache/halld/detectors/DIRC/MAPMT_test"
+#DATA_SOURCE_BASE_DIR  = "/cache/halld/detectors/DIRC/MAPMT_test"
+DATA_SOURCE_BASE_DIR  = "/volatile/halld/home/ahurley/magnetic_field_test"
 #DATA_SOURCE_TYPE      = "mss" #"mss" for tape files, "file" for disk files
 #DATA_SOURCE_BASE_DIR  = "/mss/halld/detectors/DIRC/MAPMT_test"
 
@@ -84,9 +85,9 @@ def add_job(WORKFLOW, DATA_SOURCE_DIR, FILENAME, LOAD, FPGA, FILENO):
 	# inputs
 	add_command += " -input " + FILENAME + " " + DATA_SOURCE_TYPE + ":" + DATA_SOURCE_DIR + "/" + FILENAME
 	# stdout
-	add_command += " -stdout " + DATA_OUTPUT_BASE_DIR + "log/" + "stdout." + STUBNAME + ".out"
+	add_command += " -stdout " + DATA_OUTPUT_BASE_DIR + "/" + LOAD + "/log/" + "stdout." + STUBNAME + ".out"
 	# stderr
-	add_command += " -stderr " + DATA_OUTPUT_BASE_DIR + "log/" + "stderr." + STUBNAME + ".err"
+	add_command += " -stderr " + DATA_OUTPUT_BASE_DIR + "/" + LOAD + "/log/" + "stderr." + STUBNAME + ".err"
 	# command
 	add_command += " " + SCRIPTFILE + " " + ENVFILE + " " + FILENAME + " " + DATA_OUTPUT_BASE_DIR  + " " + LOAD + " " + FPGA + " " + FILENO
 

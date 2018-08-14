@@ -17,22 +17,26 @@ class goodRICHEvent:public RICHEvent{
 	goodRICHEvent(int);
 	~goodRICHEvent();
 	void Fill(rawEvent&);
+	void FindPedestals();
+	void FillPedSubtracted(rawEvent&);
   private:
-	TH1D* h1[NCHANNELS];
+	TH1D* h1[NCHANNELS], *h1PedSub[NCHANNELS];
 	uint8_t ipix[64];
 	int nasic;
+	int ped[NCHANNELS];
 };
 
 goodRICHEvent::goodRICHEvent(int _nasic):nasic(_nasic){
 	std::copy(chan2pix, chan2pix+64, ipix);
 
-     for(int ich=0;ich<NCHANNELS;ich++)
+     for(int ich=0;ich<NCHANNELS;ich++) {
 		h1[ich]  = new TH1D(Form("h1_%03d",ich), Form("Channel %d, pixel %d; ADC",ich,ipix[ich%64]), 4100, -0.5, 4099.5 );
+		h1PedSub[ich]  = new TH1D(Form("h1PedSub_%03d",ich), Form("Pedestal Subtracted Channel %d, pixel %d; ADC - pedestal",ich,ipix[ich%64]), 4100, -50.5, 4049.5 );
+     }
 }
 
 void goodRICHEvent::Fill(rawEvent &rev)
 {
-
 
 	RICHEvent::Fill(rev);
 	for(int ich=0;ich<NCHANNELS;ich++) {
@@ -40,6 +44,25 @@ void goodRICHEvent::Fill(rawEvent &rev)
 	}
 
 }
+
+void goodRICHEvent::FindPedestals()
+{
+	// find pedestal for subtraction
+	for(int ich=0;ich<NCHANNELS;ich++) {
+	        ped[ich] = h1[ich]->GetBinCenter(h1[ich]->GetMaximumBin());
+	}
+}
+
+void goodRICHEvent::FillPedSubtracted(rawEvent &rev)
+{
+
+	RICHEvent::Fill(rev);	
+        for(int ich=0;ich<NCHANNELS;ich++) {
+                h1PedSub[ich]->Fill(fadc[ich]-ped[ich]);
+        }
+
+}
+
 
 goodRICHEvent::~goodRICHEvent(){
 	TCanvas* c1 = new TCanvas("c1","c1",800,800);
@@ -75,12 +98,16 @@ goodRICHEvent::~goodRICHEvent(){
 	c1->Print("adc_plots.pdf]");
 
 	TFile *fout = new TFile("adc_plots.hist.root", "recreate");
-	for(int ich=0;ich<NCHANNELS;ich++)
+	for(int ich=0;ich<NCHANNELS;ich++) {
                 h1[ich]->Write();
+		h1PedSub[ich]->Write();
+	}
 	fout->Close();
 
-	for(int ich=0;ich<NCHANNELS;ich++)
+	for(int ich=0;ich<NCHANNELS;ich++) {
 		delete h1[ich];
+		delete h1PedSub[ich];
+	}
 }
 
 
@@ -109,15 +136,22 @@ int main(int argc, char** argv)
  tt->SetBranchAddress("fpolar", rawEv.fpolar);
 
 
-
+ // fill initial histograms
  int nen = tt->GetEntries();
  for(int ien=0; ien<nen; ien++){
 	tt->GetEntry(ien);
 	ev.Fill(rawEv);
+ }
+
+ ev.FindPedestals();
+
+ // fill pedestal subtracted histograms
+ for(int ien=0; ien<nen; ien++){
+        tt->GetEntry(ien);
+        ev.FillPedSubtracted(rawEv);
+ }
 
 //	cout << "Here at all  ??? " << endl;
-
- }
 
 
 
