@@ -35,16 +35,13 @@ OS         = "centos7"         # Specify CentOS7 machines
 
 # SOURCE DATA INFORMATION
 DATA_SOURCE_TYPE      = "file" #"mss" for tape files, "file" for disk files
-#DATA_SOURCE_BASE_DIR  = "/cache/halld/detectors/DIRC/MAPMT_test"
-DATA_SOURCE_BASE_DIR  = "/volatile/halld/home/ahurley/magnetic_field_test"
-#DATA_SOURCE_TYPE      = "mss" #"mss" for tape files, "file" for disk files
-#DATA_SOURCE_BASE_DIR  = "/mss/halld/detectors/DIRC/MAPMT_test"
+DATA_SOURCE_BASE_DIR  = "/volatile/halld/home/jrsteven/2018-mapmt/decodeMAPMT/"
 
 # OUTPUT DATA LOCATION
-DATA_OUTPUT_BASE_DIR    = "/volatile/halld/home/%s/2018-mapmt/decodeMAPMT/"%(os.environ['USER'])   ## CHANGE IF YOU WANT TO
+DATA_OUTPUT_BASE_DIR    = "/volatile/halld/home/%s/2018-mapmt/fitMAPMT/"%(os.environ['USER'])   ## CHANGE IF YOU WANT TO
 
 # JOB EXECUTION
-SCRIPTFILE        = "/work/halld2/home/jrsteven/2018-mapmt/PMT_decoder_n_anaylsis/batch/script_decodeMAPMT.sh"
+SCRIPTFILE        = "/work/halld2/home/jrsteven/2018-mapmt/PMT_decoder_n_anaylsis/batch/script_fitMAPMT.sh"
 ENVFILE           = "/work/halld2/home/jrsteven/2017-spring-ana/setup.csh"
 
 ####################################################### FIND FILES #######################################################
@@ -58,7 +55,7 @@ def find_files(DATA_SOURCE_DIR):
 	os.chdir(DATA_SOURCE_DIR)
 
 	# SEARCH FOR THE FILES
-	file_signature = "run_*.bin"
+	file_signature = "adc_plots*.hist.root"
 	file_list = glob.glob(file_signature)
 	if(VERBOSE == True):
 		print "size of file_list is " + str(len(file_list))
@@ -101,7 +98,7 @@ def add_job(WORKFLOW, DATA_SOURCE_DIR, FILENAME, LOAD, FPGA, FILENO):
 ########################################################## MAIN ##########################################################
 	
 def main(argv):
-	parser_usage = "swif_decodeMAPMT.py workflow load_name fpga_name"
+	parser_usage = "swif_fitMAPMT.py workflow load_name fpga_name"
 	parser = OptionParser(usage = parser_usage)
 	(options, args) = parser.parse_args(argv)
 
@@ -129,12 +126,16 @@ def main(argv):
 	if(len(file_list) == 0):
 		exit
 
-		# Add jobs to workflow
+	# Add jobs to workflow
 	for FILENAME in file_list:
-		FILENO = FILENAME[4:10]
-		print FILENAME
-		print FILENO
-		add_job(WORKFLOW, DATA_SOURCE_DIR, FILENAME, LOADNAME, FPGANAME, FILENO)
+		FILENO = FILENAME[10:16]
+
+		# only fit one configuration for now
+		if int(FILENO) == 1:
+			print FILENAME
+			print FILENO
+
+			add_job(WORKFLOW, DATA_SOURCE_DIR, FILENAME, LOADNAME, FPGANAME, FILENO)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
