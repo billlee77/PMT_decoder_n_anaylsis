@@ -25,6 +25,6 @@ script_fitMAPMT.sh:
 
 ######## Some additional commands that are helpful with swif: ########
 
-swif run 			   = start running your workflow after executing swif.py script 
+swif run my_workflow 		   = start running your workflow after executing swif.py script 
 swif list    			   = check on the status of your workflows
 swif cancel my_workflow -delete    = cancel my_workflow and delete all jobs
